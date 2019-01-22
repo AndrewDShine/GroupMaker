@@ -3,6 +3,7 @@ public class Student
 	{
 		private String name;
 		private String place;
+		private int index;
 		
 		public Student(String name)
 		{
@@ -23,6 +24,14 @@ public class Student
 
 		public void setPlace(String place) {
 			this.place = place;
+		}
+
+		public int getIndex() {
+			return index;
+		}
+
+		public void setIndex(int index) {
+			this.index = index;
 		}
 		
 	}

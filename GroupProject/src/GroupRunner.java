@@ -27,23 +27,9 @@ public class GroupRunner
 					groups.add(new ArrayList<Student>());
 				}
 				
-				for(int i = 0; i < (numOfGroups); i++)
-				{
-					for(int g = 0; g < groupSize; g++)
-					{
-						groups.get(i).add(students.get((i * groupSize) + g));
-					}
-				}
-				for(int i = 0; i < remainder; i++)
-				{
-					groups.get(i).add(students.get((numOfGroups * groupSize) + i));
-				}
+				sortGroups();
 				
 				System.out.println("Pass 1:");
-//				for(Student s: students)
-//				{
-//					System.out.println(s.getName() + " " + s.getPlace());
-//				}
 				printGroups();
 			}
 		
@@ -68,6 +54,10 @@ public class GroupRunner
 			{
 				students.get((numOfGroups * groupSize) + i).setPlace(alphabet[i] + (groupSize + 1));
 			}
+			for(int i = 0; i < students.size(); i++)
+			{
+				students.get(i).setIndex(i);
+			}
 		}
 		public static void printGroups()
 		{
@@ -76,8 +66,22 @@ public class GroupRunner
 				System.out.println("Group " + (groups.indexOf(group) + 1) + ":");
 				for(Student s: group)
 				{
-					System.out.println(s.getName() + " " + s.getPlace());
+					System.out.println(s.getName() + " " + s.getPlace() + " " + s.getIndex());
 				}
+			}
+		}
+		public static void sortGroups()
+		{
+			for(int i = 0; i < (numOfGroups); i++)
+			{
+				for(int g = 0; g < groupSize; g++)
+				{
+					groups.get(i).add(students.get((i * groupSize) + g));
+				}
+			}
+			for(int i = 0; i < remainder; i++)
+			{
+				groups.get(i).add(students.get((numOfGroups * groupSize) + i));
 			}
 		}
 	}

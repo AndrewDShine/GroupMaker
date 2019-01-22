@@ -27,7 +27,7 @@ public class GroupRunner
 					groups.add(new ArrayList<Student>());
 				}
 				
-				sortGroups();
+				makeGroups();
 				
 				System.out.println("Pass 1:");
 				printGroups();
@@ -70,7 +70,7 @@ public class GroupRunner
 				}
 			}
 		}
-		public static void sortGroups()
+		public static void makeGroups()
 		{
 			for(int i = 0; i < (numOfGroups); i++)
 			{

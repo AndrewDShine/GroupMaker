@@ -1,16 +1,20 @@
+import java.util.ArrayList;
 
 public class Student 
 	{
 		private String name;
 		private String place;
 		private int index;
+		private ArrayList<Student> friends;
 		
 		public Student(String name)
 		{
 			this.name = name;
+			friends = new ArrayList<Student>();
 		}
 
-		public String getName() {
+		public String getName() 
+		{
 			return name;
 		}
 
@@ -33,6 +37,16 @@ public class Student
 		public void setIndex(int index) {
 			this.index = index;
 		}
+
+		public ArrayList<Student> getFriends()
+			{
+				return friends;
+			}
+
+		public void setFriends(ArrayList<Student> friends)
+			{
+				this.friends = friends;
+			}
 		
 	}
 		

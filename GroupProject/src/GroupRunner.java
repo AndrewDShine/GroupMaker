@@ -10,7 +10,6 @@ public class GroupRunner
 		final static String [] alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 		static ArrayList<Student> students = new ArrayList<Student>();
 		static ArrayList<ArrayList<Student>> groups = new ArrayList<ArrayList<Student>>();
-		static ArrayList<Student> gc = new ArrayList<Student>();
 		static int groupSize = 4;
 		static int numOfGroups;
 		static int remainder;
@@ -28,9 +27,24 @@ public class GroupRunner
 				}
 				
 				makeGroups();
-				
 				System.out.println("Pass 1:");
 				printGroups();
+				for(int i = 0; i < numOfGroups; i++)
+					{
+						groups.get(i).clear();
+					}
+				sortIndex();
+				for(Student s: students)
+					{
+						int counter = 0;
+						for(Student t: students)
+							{
+								if(s.getFriends().contains(t))
+									counter += 1;
+							}
+						if(counter >= students.size())
+							System.out.println("error");
+					}
 			}
 		
 		public static void readNames() throws IOException
@@ -63,10 +77,10 @@ public class GroupRunner
 		{
 			for(ArrayList<Student> group: groups)
 			{
-				System.out.println("Group " + (groups.indexOf(group) + 1) + ":");
+				System.out.println("-Group " + (groups.indexOf(group) + 1) + ":");
 				for(Student s: group)
 				{
-					System.out.println(s.getName() + " " + s.getPlace() + " " + s.getIndex());
+					System.out.println("--" + s.getName() + " " + s.getPlace() + " " + s.getIndex());
 				}
 			}
 		}
@@ -79,9 +93,40 @@ public class GroupRunner
 					groups.get(i).add(students.get((i * groupSize) + g));
 				}
 			}
-			for(int i = 0; i < remainder; i++)
-			{
-				groups.get(i).add(students.get((numOfGroups * groupSize) + i));
-			}
+//			for(int i = 0; i < remainder; i++)
+//			{
+//				groups.get(i).add(students.get((numOfGroups * groupSize) + i));
+//			}
+		}
+		public static void sortIndex()
+		{
+			for(int x = 0; x < 4; x++)
+				{
+					System.out.println("Pass " + (2 + x) + ":");
+					for(int i = 0; i < (numOfGroups); i++)
+						{
+							for(int g = 0; g < groupSize; g++)
+							{
+								groups.get(i).add(betGet((i * groupSize) + g + ((groupSize + x) * (g + 1))));
+							}
+							for(Student s: groups.get(i))
+								{
+									s.getFriends().addAll(groups.get(i));
+									s.getFriends().remove(s);
+								}
+						}
+					printGroups();
+					for(int i = 0; i < numOfGroups; i++)
+						{
+							groups.get(i).clear();
+						}
+				}
+		}
+		public static Student betGet(int index)
+		{
+			if(index >= students.size())
+					return betGet(index - students.size());
+			else
+				return students.get(index);
 		}
 	}

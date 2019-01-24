@@ -9,6 +9,7 @@ public class GroupRunner
 	{
 		final static String [] alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 		static ArrayList<Student> students = new ArrayList<Student>();
+		static ArrayList<Student> tempStudents = new ArrayList<Student>();
 		static ArrayList<ArrayList<Student>> groups = new ArrayList<ArrayList<Student>>();
 		static int groupSize = 4;
 		static int numOfGroups;
@@ -36,14 +37,18 @@ public class GroupRunner
 				sortIndex();
 				for(Student s: students)
 					{
-						int counter = 0;
-						for(Student t: students)
+						ArrayList<Student> sF = s.getFriends();
+						for(int i = 0; i < sF.size(); i++)
 							{
-								if(s.getFriends().contains(t))
-									counter += 1;
+								if(s.equals(sF.get(i)))
+									{
+										sF.remove(i);
+									}
 							}
-						if(counter >= students.size())
-							System.out.println("error");
+					}
+				for(Student s: students.get(0).getFriends())
+					{
+						System.out.print(s.getName() + " ");
 					}
 			}
 		
@@ -72,6 +77,10 @@ public class GroupRunner
 			{
 				students.get(i).setIndex(i);
 			}
+			for(Student s: students)
+				{
+					tempStudents.add(s);
+				}
 		}
 		public static void printGroups()
 		{
@@ -107,12 +116,12 @@ public class GroupRunner
 						{
 							for(int g = 0; g < groupSize; g++)
 							{
-								groups.get(i).add(betGet((i * groupSize) + g + ((groupSize + x) * (g + 1))));
+								Student s = betGet((i * groupSize) + g + ((groupSize + x) * (g + 1)));
+								groups.get(i).add(s);
 							}
 							for(Student s: groups.get(i))
 								{
 									s.getFriends().addAll(groups.get(i));
-									s.getFriends().remove(s);
 								}
 						}
 					printGroups();
@@ -120,13 +129,21 @@ public class GroupRunner
 						{
 							groups.get(i).clear();
 						}
+					for(Student s: students)
+						{
+							tempStudents.add(s);
+						}
 				}
 		}
 		public static Student betGet(int index)
 		{
-			if(index >= students.size())
-					return betGet(index - students.size());
+			if(index >= tempStudents.size())
+					return betGet(index - tempStudents.size());
 			else
-				return students.get(index);
+				{
+					Student s = tempStudents.get(index);
+					tempStudents.remove(s);
+					return s;
+				}
 		}
 	}

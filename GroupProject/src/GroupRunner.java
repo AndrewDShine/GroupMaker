@@ -11,6 +11,7 @@ public class GroupRunner
 		static ArrayList<Student> students = new ArrayList<Student>();
 		static ArrayList<Student> tempStudents = new ArrayList<Student>();
 		static ArrayList<ArrayList<Student>> groups = new ArrayList<ArrayList<Student>>();
+		static ArrayList<ArrayList<ArrayList<Student>>> prevGroups = new ArrayList<ArrayList<ArrayList<Student>>>();
 		static int groupSize = 4;
 		static int numOfGroups;
 		static int remainder;
@@ -30,6 +31,7 @@ public class GroupRunner
 				makeGroups();
 				System.out.println("Pass 1:");
 				printGroups();
+				prevGroups.add(groups);
 				for(int i = 0; i < numOfGroups; i++)
 					{
 						groups.get(i).clear();
@@ -109,14 +111,29 @@ public class GroupRunner
 		}
 		public static void sortIndex()
 		{
-			for(int x = 0; x < 4; x++)
+			for(int x = 0; x < 2; x++)
 				{
 					System.out.println("Pass " + (2 + x) + ":");
 					for(int i = 0; i < (numOfGroups); i++)
 						{
 							for(int g = 0; g < groupSize; g++)
 							{
-								Student s = betGet((i * groupSize) + g + ((groupSize + x) * (g + 1)));
+								Student s;
+								boolean valid = true;
+								int counter = 0;
+								do
+									{
+										s = betGet((i * groupSize) + g + ((groupSize + x) * (g + 1)) + counter);
+										for(Student t: groups.get(i))
+											{
+												if(t.getFriends().contains(s))
+													{
+														valid = false;
+													}
+											}
+										counter++;
+									}
+								while(!valid);
 								groups.get(i).add(s);
 							}
 							for(Student s: groups.get(i))
@@ -144,6 +161,13 @@ public class GroupRunner
 					Student s = tempStudents.get(index);
 					tempStudents.remove(s);
 					return s;
+				}
+		}
+		public static void randChoose()
+		{
+			
+			for(ArrayList<ArrayList<Student>> groups: prevGroups)
+				{
 				}
 		}
 	}

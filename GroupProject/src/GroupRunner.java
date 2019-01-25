@@ -41,6 +41,10 @@ public class GroupRunner
 				printGroups();
 				sortIndex();
 				sortIndex();
+				for(Student s: students)
+					{
+						checkFriends(s);
+					}
 			}
 		
 		public static void readNames() throws IOException
@@ -119,7 +123,20 @@ public class GroupRunner
 				}
 			for(Student s: tempStudents)
 				{
-					groups.get(tempStudents.indexOf(s)).add(s);
+					for(ArrayList<Student> group: groups)
+						{
+							boolean valid = true;
+							for(Student t: group)
+								{
+									if(s.getFriends().contains(t))
+										{
+											valid = false;
+										}
+								}
+							if(valid)
+								group.add(s);
+							break;
+						}
 				}
 			for(ArrayList<Student> group: groups)
 				{
@@ -187,9 +204,19 @@ public class GroupRunner
 		}
 		public static void checkFriends(Student s1)
 		{
+			boolean hasOverlap = false;
 			for(Student s: s1.getFriends())
 				{
-					
+					int counter = 0;
+					for(Student t: s1.getFriends())
+						{
+							if(s.equals(t))
+								counter++;
+						}
+					if(counter > 1)
+						hasOverlap = true;
 				}
+			if(hasOverlap)
+				System.out.println(s1.getName() + " has overlap.");
 		}
 	}

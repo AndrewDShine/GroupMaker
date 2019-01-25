@@ -118,6 +118,11 @@ public class GroupRunner
 					group.add(betGet(startIndex));
 					for(int i = 0; i < groupSize - 1; i++)
 						{
+							for(Student s: group)
+								{
+									if(s.getFriends().contains(students.get(startIndex + ((3 + passNum) * (i + 1)))))
+										System.out.println("fails");;
+								}
 							group.add(betGet(startIndex + ((3 + passNum) * (i + 1))));
 						}
 				}

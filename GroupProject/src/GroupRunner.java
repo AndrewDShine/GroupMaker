@@ -11,10 +11,10 @@ public class GroupRunner
 		static ArrayList<Student> students = new ArrayList<Student>();
 		static ArrayList<Student> tempStudents = new ArrayList<Student>();
 		static ArrayList<ArrayList<Student>> groups = new ArrayList<ArrayList<Student>>();
-		static ArrayList<ArrayList<ArrayList<Student>>> prevGroups = new ArrayList<ArrayList<ArrayList<Student>>>();
 		static int groupSize = 4;
 		static int numOfGroups;
 		static int remainder;
+		static int passNum = 0;
 		
 		public static void main(String[] args) throws IOException
 			{	
@@ -29,29 +29,18 @@ public class GroupRunner
 				}
 				
 				makeGroups();
-				System.out.println("Pass 1:");
-				printGroups();
-				prevGroups.add(groups);
-				for(int i = 0; i < numOfGroups; i++)
+				for(ArrayList<Student> group: groups)
 					{
-						groups.get(i).clear();
-					}
-				sortIndex();
-				for(Student s: students)
-					{
-						ArrayList<Student> sF = s.getFriends();
-						for(int i = 0; i < sF.size(); i++)
+						for(Student s: group)
 							{
-								if(s.equals(sF.get(i)))
-									{
-										sF.remove(i);
-									}
+								s.getFriends().addAll(group);
+								s.getFriends().remove(s);
 							}
 					}
-				for(Student s: students.get(0).getFriends())
-					{
-						System.out.print(s.getName() + " ");
-					}
+				System.out.println("Pass " + passNum + ":");
+				printGroups();
+				sortIndex();
+				sortIndex();
 			}
 		
 		public static void readNames() throws IOException
@@ -91,7 +80,7 @@ public class GroupRunner
 				System.out.println("-Group " + (groups.indexOf(group) + 1) + ":");
 				for(Student s: group)
 				{
-					System.out.println("--" + s.getName() + " " + s.getPlace() + " " + s.getIndex());
+					System.out.println("--" + s.getName() + " " + s.getIndex());
 				}
 			}
 		}
@@ -104,53 +93,45 @@ public class GroupRunner
 					groups.get(i).add(students.get((i * groupSize) + g));
 				}
 			}
-//			for(int i = 0; i < remainder; i++)
-//			{
-//				groups.get(i).add(students.get((numOfGroups * groupSize) + i));
-//			}
+			for(int i = 0; i < remainder; i++)
+			{
+				groups.get(i).add(students.get((numOfGroups * groupSize) + i));
+			}
+			passNum++;
 		}
 		public static void sortIndex()
 		{
-			for(int x = 0; x < 2; x++)
+			tempStudents.clear();
+			for(Student s: students)
 				{
-					System.out.println("Pass " + (2 + x) + ":");
-					for(int i = 0; i < (numOfGroups); i++)
+					tempStudents.add(s);
+				}
+			for(ArrayList<Student> group: groups)
+				{
+					int startIndex = groups.get(0).get(0).getIndex();
+					startIndex += groups.indexOf(group);
+					group.clear();
+					group.add(betGet(startIndex));
+					for(int i = 0; i < groupSize - 1; i++)
 						{
-							for(int g = 0; g < groupSize; g++)
-							{
-								Student s;
-								boolean valid = true;
-								int counter = 0;
-								do
-									{
-										s = betGet((i * groupSize) + g + ((groupSize + x) * (g + 1)) + counter);
-										for(Student t: groups.get(i))
-											{
-												if(t.getFriends().contains(s))
-													{
-														valid = false;
-													}
-											}
-										counter++;
-									}
-								while(!valid);
-								groups.get(i).add(s);
-							}
-							for(Student s: groups.get(i))
-								{
-									s.getFriends().addAll(groups.get(i));
-								}
-						}
-					printGroups();
-					for(int i = 0; i < numOfGroups; i++)
-						{
-							groups.get(i).clear();
-						}
-					for(Student s: students)
-						{
-							tempStudents.add(s);
+							group.add(betGet(startIndex + ((3 + passNum) * (i + 1))));
 						}
 				}
+			for(Student s: tempStudents)
+				{
+					groups.get(tempStudents.indexOf(s)).add(s);
+				}
+			for(ArrayList<Student> group: groups)
+				{
+					for(Student s: group)
+						{
+							s.getFriends().addAll(group);
+							s.getFriends().remove(s);
+						}
+				}
+			passNum++;
+			System.out.println("Pass " + passNum + ":");
+			printGroups();
 		}
 		public static Student betGet(int index)
 		{
@@ -165,9 +146,50 @@ public class GroupRunner
 		}
 		public static void randChoose()
 		{
-			
-			for(ArrayList<ArrayList<Student>> groups: prevGroups)
+			System.out.println("rand");
+			boolean validGroups = true;
+			for(int i = 0; i < 100; i++)
 				{
+					Collections.shuffle(students);
+					makeGroups();
+					for(ArrayList<Student> group: groups)
+						{
+							for(Student s: group)
+								{
+									for(Student t: group)
+										{
+											if(s.getFriends().contains(t))
+												{
+													validGroups = false;
+												}
+										}
+								}
+						}
+					if(validGroups)
+						{
+							break;
+						}
+				}
+			if(!validGroups)
+				{
+					System.out.println("No more unique groups can be created.");
+				}
+			else
+				{
+					System.out.println("Rand Pass:");
+					printGroups();
+					for(int i = 0; i < numOfGroups; i++)
+						{
+							groups.get(i).clear();
+						}
+				}
+			
+		}
+		public static void checkFriends(Student s1)
+		{
+			for(Student s: s1.getFriends())
+				{
+					
 				}
 		}
 	}

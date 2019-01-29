@@ -11,24 +11,51 @@ public class GroupRunner
 		static ArrayList<Student> students = new ArrayList<Student>();
 		static ArrayList<Student> tempStudents = new ArrayList<Student>();
 		static ArrayList<ArrayList<Student>> groups = new ArrayList<ArrayList<Student>>();
-		static int groupSize = 4;
+		static Scanner user_IntPut = new Scanner(System.in);
+		static int groupSize;
 		static int numOfGroups;
 		static int remainder;
-		static int passNum = 0;
+		static int passNum = 1;
 		
-		public static void main(String[] args) throws IOException
+		public static void main(String[] args) throws IOException, InterruptedException
 			{	
 				readNames();
-				numOfGroups = students.size() / groupSize;
-				remainder = students.size() % groupSize;
-				assignPlaces();
-				
+				System.out.println("Hello, User! Would you like to enter the number of students per group, or the number of groups?");
+				System.out.println("1) Students per Group");
+				System.out.println("2) Number of Groups");
+				int choice = user_IntPut.nextInt();
+				switch (choice)
+				{
+					case 1:
+						System.out.println("Please enter the number of students you'd like per group!");
+						groupSize = user_IntPut.nextInt();
+						numOfGroups = students.size() / groupSize;
+						remainder = students.size() % groupSize;
+						break;
+					case 2:
+						System.out.println("Please enter the number of groups you'd like!");
+						numOfGroups = user_IntPut.nextInt();
+						groupSize = students.size() / numOfGroups;
+						remainder = students.size() % groupSize;
+						break;
+				}
+				assignPlaces();	
 				for(int i = 0; i < numOfGroups; i++)
 				{
 					groups.add(new ArrayList<Student>());
 				}
-				
+				for(int i = 0; i < 3; i++)
+					{
+						Thread.sleep(500);
+						for(int j = 0; j < i+1; j++)
+							{
+								System.out.print(".");
+							}
+						System.out.println();
+					}
+				Thread.sleep(500);
 				makeGroups();
+				printGroups();
 				for(ArrayList<Student> group: groups)
 					{
 						for(Student s: group)
@@ -37,10 +64,8 @@ public class GroupRunner
 								s.getFriends().remove(s);
 							}
 					}
-				System.out.println("Pass " + passNum + ":");
-				printGroups();
-				sortIndex();
-				sortIndex();
+				sort();
+				sort();
 				for(Student s: students)
 					{
 						checkFriends(s);
@@ -79,6 +104,7 @@ public class GroupRunner
 		}
 		public static void printGroups()
 		{
+			System.out.println("Pass " + passNum + ":");
 			for(ArrayList<Student> group: groups)
 			{
 				System.out.println("-Group " + (groups.indexOf(group) + 1) + ":");
@@ -87,6 +113,7 @@ public class GroupRunner
 					System.out.println("--" + s.getName() + " " + s.getIndex());
 				}
 			}
+			passNum++;
 		}
 		public static void makeGroups()
 		{
@@ -101,59 +128,6 @@ public class GroupRunner
 			{
 				groups.get(i).add(students.get((numOfGroups * groupSize) + i));
 			}
-			passNum++;
-		}
-		public static void sortIndex()
-		{
-			tempStudents.clear();
-			for(Student s: students)
-				{
-					tempStudents.add(s);
-				}
-			for(ArrayList<Student> group: groups)
-				{
-					int startIndex = groups.get(0).get(0).getIndex();
-					startIndex += groups.indexOf(group);
-					group.clear();
-					group.add(betGet(startIndex));
-					for(int i = 0; i < groupSize - 1; i++)
-						{
-							for(Student s: group)
-								{
-									if(s.getFriends().contains(students.get(startIndex + ((3 + passNum) * (i + 1)))))
-										System.out.println("fails");;
-								}
-							group.add(betGet(startIndex + ((3 + passNum) * (i + 1))));
-						}
-				}
-			for(Student s: tempStudents)
-				{
-					for(ArrayList<Student> group: groups)
-						{
-							boolean valid = true;
-							for(Student t: group)
-								{
-									if(s.getFriends().contains(t))
-										{
-											valid = false;
-										}
-								}
-							if(valid)
-								group.add(s);
-							break;
-						}
-				}
-			for(ArrayList<Student> group: groups)
-				{
-					for(Student s: group)
-						{
-							s.getFriends().addAll(group);
-							s.getFriends().remove(s);
-						}
-				}
-			passNum++;
-			System.out.println("Pass " + passNum + ":");
-			printGroups();
 		}
 		public static Student betGet(int index)
 		{
@@ -166,49 +140,9 @@ public class GroupRunner
 					return s;
 				}
 		}
-		public static void randChoose()
+		public static boolean checkFriends(Student s1)
 		{
-			System.out.println("rand");
-			boolean validGroups = true;
-			for(int i = 0; i < 100; i++)
-				{
-					Collections.shuffle(students);
-					makeGroups();
-					for(ArrayList<Student> group: groups)
-						{
-							for(Student s: group)
-								{
-									for(Student t: group)
-										{
-											if(s.getFriends().contains(t))
-												{
-													validGroups = false;
-												}
-										}
-								}
-						}
-					if(validGroups)
-						{
-							break;
-						}
-				}
-			if(!validGroups)
-				{
-					System.out.println("No more unique groups can be created.");
-				}
-			else
-				{
-					System.out.println("Rand Pass:");
-					printGroups();
-					for(int i = 0; i < numOfGroups; i++)
-						{
-							groups.get(i).clear();
-						}
-				}
-			
-		}
-		public static void checkFriends(Student s1)
-		{
+//			System.out.println("Checking " + s1.getName());
 			boolean hasOverlap = false;
 			for(Student s: s1.getFriends())
 				{
@@ -221,7 +155,100 @@ public class GroupRunner
 					if(counter > 1)
 						hasOverlap = true;
 				}
-			if(hasOverlap)
-				System.out.println(s1.getName() + " has overlap.");
+			return hasOverlap;
+		}
+		public static void sequentialChoose()
+		{
+			tempStudents.clear();
+			for(Student s: students)
+				{
+					tempStudents.add(s);
+				}
+			for(ArrayList<Student> group: groups)
+				{
+					group.clear();
+				}
+			for(int i = 0; i < numOfGroups; i++)
+				{
+					groups.get(i).add(betGet(0));
+				}
+			for(ArrayList<Student> group: groups)
+				{
+					for(int i = 0; i < groupSize - 1; i++)
+						{
+							for(int j = 0; j < tempStudents.size(); j++)
+								{
+									boolean valid = true;
+									Student t = tempStudents.get(j);
+									for(Student s: group)
+										{
+											if(s.getFriends().contains(t))
+												{
+													valid = false;
+												}
+										}
+									if(valid)
+										{
+											group.add(betGet(j));
+											break;
+										}
+								}
+						}
+				}
+			if(tempStudents.size() > 0)
+				{
+					for(int i = 0; i < tempStudents.size(); i++)
+						{
+							Student t = tempStudents.get(i);
+							for(ArrayList<Student> group: groups)
+								{
+									boolean valid = true;
+									for(Student s: group)
+										{
+											if(s.getFriends().contains(t))
+												{
+													valid = false;
+												}
+										}
+									if(valid)
+										{
+											group.add(betGet(i));
+											break;
+										}
+								}
+						}
+				}
+			printGroups();
+			if(tempStudents.size() > 0)
+				{
+					System.out.println("These students couldn't be grouped:");
+					for(Student s: tempStudents)
+						{
+							System.out.print(" " + s.getName() + ",");
+						}
+					System.out.println();
+				}
+		}
+		public static void sort() throws InterruptedException
+		{
+			for(int i = 0; i < 3; i++)
+				{
+					Thread.sleep(500);
+					for(int j = 0; j < i+1; j++)
+						{
+							System.out.print(".");
+						}
+					System.out.println();
+				}
+			Thread.sleep(500);
+			sequentialChoose();
+			for(ArrayList<Student> group: groups)
+				{
+					for(Student s: group)
+						{
+							s.getFriends().addAll(group);
+							s.getFriends().remove(s);
+						}
+				}
 		}
 	}

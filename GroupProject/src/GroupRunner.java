@@ -64,7 +64,9 @@ public class GroupRunner
 								s.getFriends().remove(s);
 							}
 					}
+				Collections.shuffle(students);
 				sort();
+				Collections.shuffle(students);
 				sort();
 				for(Student s: students)
 					{
